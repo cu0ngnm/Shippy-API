@@ -1,4 +1,5 @@
 import express from 'express';
+import socket from 'socket.io';
 import http from 'http';
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
@@ -8,23 +9,25 @@ import config from './config';
 import routes from './routes';
 
 let app = express();
-app.use(logger('dev'));
 
-app.server = http.createServer(app);
+app.use(logger('dev'));
+//app.server = http.createServer(app);
+const server = http.createServer(app);
 
 // middleware
-
-//parse application.json
-app.use(bodyParser.json({
+app.use(bodyParser.json({   // parse application.json
   limit: config.bodyLimit
 }));
 
-// passport config
+// socket.io
+//export const io = socket.listen(app.server);
+const io = socket.listen(server);
+require('./socket')(io);
 
 // api routes v1
 app.use('/v1', routes);
 
-app.server.listen(config.port);
-console.log(`Started on port ${app.server.address().port}`);
+server.listen(config.port);
+console.log(`Started on port ${server.address().port}`);
 
 export default app;
