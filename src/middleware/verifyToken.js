@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import constant from '../Utilities/constant';
+import constant from '../utilities/constant';
 
 
 module.exports = function(req,res,next) {
