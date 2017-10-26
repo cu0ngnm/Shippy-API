@@ -24,6 +24,10 @@ app.use(bodyParser.json({   // parse application.json
 const io = socket.listen(server);
 require('./socket')(io);
 
+app.get('/', function (req, res) {
+  res.send('Welcome to Shippy API !');
+});
+
 // api routes v1
 app.use('/v1', routes);
 
