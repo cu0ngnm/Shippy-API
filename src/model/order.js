@@ -7,6 +7,10 @@ let Order = {
     return connection.query('SELECT * from `order` WHERE order_code = ?', id, callback);
   },
 
+  getAllOrder:function(callback){
+    return connection.query('SELECT * from `order`', callback);
+  },
+
   createOrder:function(order, callback) {
     return connection.query('INSERT INTO `order` SET ?', order, callback);
   },

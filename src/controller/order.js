@@ -9,14 +9,38 @@ export default({ config, db}) => {
   let api = Router();
 
   api.get('/order/:id', (req, res) => {
-    Seller.getSellerByID(req.params.id, function(err, result){
+    Order.getOrderByID(req.params.id, function(err, result){
                 if(err) {
-                    res.json(err);
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
                 } else {
-                    res.json(result);
+                  res.status(200).send({
+                    "code":200,
+                    "order":result
+                  });
                 }
     });
   });
+
+
+  api.get('/order/', (req, res) => {
+    Order.getAllOrder(function(err, result){
+                if(err) {
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
+                } else {
+                  res.status(200).send({
+                    "code":200,
+                    "order":result
+                  });
+                }
+    });
+  });
+
 
   // '/v1/shippy/order/create' - POST - add new record
   api.post('/order/create', (req, res) => {
@@ -32,13 +56,10 @@ export default({ config, db}) => {
     }
     Order.createOrder(order, function(err, result){
       if(!err){
-        if(result.affectedRows != 0) {
-          response.push({'result' : 'add success'});
-        } else {
-          response.push({'msg' : 'no result found'});
-        }
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).send(JSON.stringify(response));
+        res.status(201).send({
+          "code":201,
+          "message":"Order created!"
+        });
       } else {
         res.status(400).send(err);
       }

@@ -9,9 +9,15 @@ export default({ config, db}) => {
   api.get('/buyer/:id', (req, res) => {
     Buyer.getAllBuyers(req.params.id, function(err, result){
                 if(err) {
-                    res.json(err);
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
                 } else {
-                    res.json(result);
+                  res.status(200).send({
+                    "code":200,
+                    "buyer":result
+                  });
                 }
     });
   });

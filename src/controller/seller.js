@@ -17,9 +17,15 @@ export default({ config, db}) => {
   api.get('/seller/:id', (req, res) => {
     Seller.getSellerByID(req.params.id, function(err, result){
                 if(err) {
-                    res.json(err);
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
                 } else {
-                    res.json(result);
+                  res.status(200).send({
+                    "code":200,
+                    "seller":result
+                  });
                 }
     });
   });
@@ -42,8 +48,8 @@ export default({ config, db}) => {
     Seller.registerSeller(seller, function(err, result){
 
       if(!err){
-        res.status(200).send({
-          "code":200,
+        res.status(201).send({
+          "code":201,
           "message":"Register successful."
         });
       } else if(err.code == 'ER_DUP_ENTRY'){

@@ -8,9 +8,9 @@ module.exports = function(req,res,next) {
     // verifies secret and checks exp
         jwt.verify(token, constant.CONST.TOKEN_SECRET, function(err, decoded) {
             if (err) { //failed verification.
-                return res.json({
+              return res.status(401).send({
                   "error": err
-                });
+              });
             }
             req.decoded = decoded;
             next(); //no error, proceed
