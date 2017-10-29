@@ -33,10 +33,6 @@ export default({ config, db}) => {
   // '/v1/shippy/seller/register' - POST - add new record
   api.post('/seller/register', (req, res) => {
 
-    bcrypt.hash(req.body.seller_password, salt, function(err, hash) {
-      // Store hash in your password DB.
-    });
-
     let hashPassword = bcrypt.hashSync(req.body.seller_password, salt);
 
     let seller = {
