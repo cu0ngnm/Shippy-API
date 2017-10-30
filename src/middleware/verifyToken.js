@@ -23,3 +23,7 @@ module.exports = function(req,res,next) {
         });
     }
 }
+
+
+//module.exports.restAuthen
+//module.exports.socketAuthen
