@@ -75,6 +75,7 @@ export default({ config, db}) => {
           });
           res.status(200).send({
             "code":200,
+            "role": 'seller',
             "seller_phone":req.body.seller_phone,
             "token":token
           });
