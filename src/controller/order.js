@@ -43,7 +43,7 @@ export default({ config, db}) => {
 
 
   // '/v1/shippy/order/create' - POST - add new record
-  api.post('/order/create', (req, res) => {
+  api.post('/order/create', verifyToken, (req, res) => {
     let response = [];
 
     let order = {
