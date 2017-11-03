@@ -3,7 +3,7 @@ import {  Router } from 'express';
 import bodyParser from 'body-parser';
 import Order from '../model/order';
 import config from '../config';
-
+import verifyToken from '../middleware/verifyToken';
 
 export default({ config, db}) => {
   let api = Router();
@@ -43,7 +43,7 @@ export default({ config, db}) => {
 
 
   // '/v1/shippy/order/create' - POST - add new record
-  api.post('/order/create', (req, res) => {
+  api.post('/order/create', verifyToken, (req, res) => {
     let response = [];
 
     let order = {
@@ -52,7 +52,11 @@ export default({ config, db}) => {
       "buyer_phone": req.body.buyer_phone,
       "category_id": req.body.category_id,
       "order_price": req.body.order_price,
-      "order_fee": req.body.order_fee
+      "order_fee": req.body.order_fee,
+      "from_longitude": req.body.from_longitude,
+      "from_latitude": req.body.from_latitude,
+      "to_longitude": req.body.to_longitude,
+      "to_latitude": req.body.to_latitude
     }
     Order.createOrder(order, function(err, result){
       if(!err){
