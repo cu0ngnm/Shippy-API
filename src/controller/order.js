@@ -47,7 +47,7 @@ export default({ config, db}) => {
 
   // '/v1/shippy/order/receive_order/'
   api.post('/order/receive_order/', (req, res) => {
-    console.log(req.body.order_code + ' seller ' req.body.seller_phone + ' shippe ' req.body.shipper_phone);
+    console.log(req.body.order_code + ' seller ' + req.body.seller_phone + ' shippe ' + req.body.shipper_phone);
     Order.CheckStatus(req.body.order_code, function(err, statusResult){
       if(statusResult[0].status_flg == constant.WAITTING_ORDER){
 
