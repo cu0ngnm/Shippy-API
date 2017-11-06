@@ -8,7 +8,7 @@ let Order = {
   },
 
   GetWaiting:function(callback){
-    return connection.query('SELECT * from `order` WHERE status_flg = 1', callback);
+    return connection.query('SELECT * from `order` WHERE status_flg = 1 ORDER BY updatedAt DESC', callback);
   },
 
   CreateOrder:function(order, callback) {
