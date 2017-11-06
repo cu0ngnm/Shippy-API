@@ -7,8 +7,8 @@ let Order = {
     return connection.query('SELECT * from `order` WHERE order_code = ?', id, callback);
   },
 
-  GetAll:function(callback){
-    return connection.query('SELECT * from `order`', callback);
+  GetWaiting:function(callback){
+    return connection.query('SELECT * from `order` WHERE status_flg = 1', callback);
   },
 
   CreateOrder:function(order, callback) {

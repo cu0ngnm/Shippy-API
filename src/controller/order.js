@@ -30,7 +30,7 @@ export default({ config, db}) => {
   });
 
   api.get('/order/', (req, res) => {
-    Order.GetAll(function(err, result){
+    Order.GetWaiting(function(err, result){
                 if(err) {
                   res.status(400).send({
                     "code":400,
