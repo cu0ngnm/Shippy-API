@@ -118,12 +118,12 @@ export default({ config, db}) => {
   api.post('/order/create', verifyToken, (req, res) => {
 
     let order = {
-      "order_code": req.body.order_code,
       "seller_phone": req.body.seller_phone,
       "buyer_phone": req.body.buyer_phone,
       "category_id": req.body.category_id,
       "order_price": req.body.order_price,
       "order_fee": req.body.order_fee,
+      "order_description": req.body.order_description,
       "from_longitude": req.body.from_longitude,
       "from_latitude": req.body.from_latitude,
       "to_longitude": req.body.to_longitude,
