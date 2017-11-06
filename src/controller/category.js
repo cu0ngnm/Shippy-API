@@ -9,7 +9,7 @@ export default({ config, db}) => {
   let api = Router();
 
   api.get('/category/', verifyToken, (req, res) => {
-    Category.getAllCategory(function(err, result){
+    Category.GetAll(function(err, result){
                 if(err) {
                   res.status(400).send({
                     "code":400,

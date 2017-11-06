@@ -3,7 +3,7 @@ import connection from '../db';
 
 let Category = {
 
-  getAllCategory:function(callback){
+  GetAll:function(callback){
     return connection.query('SELECT * from category', callback);
   }
 

@@ -15,7 +15,7 @@ export default({ config, db}) => {
   let api = Router();
 
   api.get('/shipper/:id', (req, res) => {
-    Shipper.getByID(req.params.id, function(err, result){
+    Shipper.GetByID(req.params.id, function(err, result){
                 if(err) {
                   res.status(400).send({
                     "code":400,
@@ -41,7 +41,7 @@ export default({ config, db}) => {
       "shipper_email": req.body.shipper_email,
       "shipper_password": hashPassword
     }
-    Shipper.register(shipper, function(err, result){
+    Shipper.Register(shipper, function(err, result){
 
       if(!err){
         res.status(201).send({
@@ -63,15 +63,15 @@ export default({ config, db}) => {
   // '/v1/shippy/shipper/login' - POST
   api.post('/shipper/login', (req, res) => {
 
-    Shipper.login(req.body.shipper_phone, function(err, result){
+    Shipper.Login(req.body.shipper_phone, function(err, result){
 
       if(result.length > 0){
 
         if(bcrypt.compareSync(req.body.shipper_password, result[0].shipper_password)){
           let token = jwt.sign({
             id: req.body.shipper_phone,
-          }, constant.CONST.TOKEN_SECRET, {
-            expiresIn: constant.CONST.TOKENTIME // 30 days
+          }, constant.TOKEN_SECRET, {
+            expiresIn: constant.TOKENTIME // 30 days
           });
           res.status(200).send({
             "code":200,
@@ -96,6 +96,20 @@ export default({ config, db}) => {
       }
     });
   });
+
+  api.post('/shipper/device_token', (req, res) => {
+    Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
+      if(!err){
+        res.status(200).send({
+          "code":200,
+          "message":"device_token update successful"
+        });
+      } else {
+        res.status(400).send(err);
+      }
+    });
+  });
+
 
   return api;
 }

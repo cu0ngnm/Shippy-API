@@ -55,10 +55,7 @@ export default({ config, db}) => {
       } else {
         res.status(400).send(err);
       }
-      /*if (err) {
-        res.send(err);
-      }
-      res.json({ message: 'buyer info updated' });*/
+      
     });
   });
 
