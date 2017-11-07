@@ -107,13 +107,8 @@ export default({ config, db}) => {
   });
 
   api.post('/seller/device_token', (req, res) => {
-
-    if(!req.body.device_token){
-      res.status(200).send({
-        "code":'DEVICE_TOKEN_NULL',
-        "message":"check your device_token"
-      });
-    } else if (!req.body.seller_phone) {
+    console.log(req.body.device_token);
+    if (!req.body.seller_phone) {
       res.status(200).send({
         "code":'SELLER_PHONE_NULL',
         "message":"check your seller_phone"

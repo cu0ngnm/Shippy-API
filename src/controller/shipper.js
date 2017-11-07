@@ -98,13 +98,8 @@ export default({ config, db}) => {
   });
 
   api.post('/shipper/device_token', (req, res) => {
-
-    if(!req.body.device_token){
-      res.status(200).send({
-        "code":'DEVICE_TOKEN_NULL',
-        "message":"check your device_token"
-      });
-    } else if (!req.body.shipper_phone) {
+    console.log('fcm token: ' + req.body.device_token);
+    if (!req.body.shipper_phone) {
       res.status(200).send({
         "code":'SHIPPER_PHONE_NULL',
         "message":"check your shipper_phone"
