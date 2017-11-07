@@ -107,18 +107,18 @@ export default({ config, db}) => {
   });
 
   api.post('/seller/device_token', (req, res) => {
-    console.log(req.body.device_token);
+    console.log('fcm token: ' + req.body.device_token);
     if (!req.body.seller_phone) {
       res.status(200).send({
         "code":'SELLER_PHONE_NULL',
-        "message":"check your seller_phone"
+        "message":"check your seller_phone/null"
       });
     } else {
       Seller.UpdateDeviceToken(req.body.device_token, req.body.seller_phone, function(err, result){
         if(result.affectedRows == 0){
           res.status(200).send({
             "code":'SELLER_PHONE_NOT_FOUND',
-            "message":"check your seller_phone"
+            "message":"check your seller_phone/not found"
           });
         } else {
           if(!err){

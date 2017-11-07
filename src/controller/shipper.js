@@ -102,7 +102,7 @@ export default({ config, db}) => {
     if (!req.body.shipper_phone) {
       res.status(200).send({
         "code":'SHIPPER_PHONE_NULL',
-        "message":"check your shipper_phone"
+        "message":"check your shipper_phone/null"
       });
     } else {
       Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
@@ -110,7 +110,7 @@ export default({ config, db}) => {
           if(result.affectedRows == 0){
             res.status(200).send({
               "code":'SHIPPER_PHONE_NOT_FOUND',
-              "message":"check your shipper_phone"
+              "message":"check your shipper_phone/not found"
             });
           } else {
             res.status(200).send({
