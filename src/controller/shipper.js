@@ -111,9 +111,8 @@ export default({ config, db}) => {
       });
     } else {
       Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
-
         if(!err){
-          if(!result.length){
+          if(result.affectedRows == 0){
             res.status(200).send({
               "code":'SHIPPER_PHONE_NOT_FOUND',
               "message":"check your shipper_phone"
