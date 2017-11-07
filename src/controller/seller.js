@@ -16,30 +16,25 @@ export default({ config, db}) => {
 
   api.get('/seller/:id', (req, res) => {
     Seller.GetByID(req.params.id, function(err, result){
-                if(err) {
-                  res.status(400).send({
-                    "code":400,
-                    "error":err
-                  });
-                } else {
-                  res.status(200).send({
-                    "code":200,
-                    "seller":result
-                  });
-                }
-    });
-  });
 
-  api.post('/seller/device_token', (req, res) => {
-    Seller.UpdateDeviceToken(req.body.device_token, req.body.seller_phone, function(err, result){
       if(!err){
-        res.status(200).send({
-          "code":200,
-          "message":"device_token update successful"
-        });
+        if(result.length > 0){
+          res.status(200).send({
+            "code":200,
+            "seller":result
+          });
+        } else if (!result.length) {
+          res.status(200).send({
+            "code":200,
+            "message":"phone does not exists"
+          });
+        }
       } else {
-        res.status(400).send(err);
-      }
+       res.status(400).send({
+         "code":400,
+         "error":err
+       });
+     }
     });
   });
 
@@ -78,34 +73,68 @@ export default({ config, db}) => {
 
     Seller.Login(req.body.seller_phone, function(err, result){
 
-      if(result.length > 0){
-        console.log(salt);
-        if(bcrypt.compareSync(req.body.seller_password, result[0].seller_password)){
-          let token = jwt.sign({
-            id: req.body.seller_phone,
-          }, constant.TOKEN_SECRET, {
-            expiresIn: constant.TOKENTIME // 30 days
-          });
+      if(!err){
+        if(result.length > 0){
+          if(bcrypt.compareSync(req.body.seller_password, result[0].seller_password)){
+            let token = jwt.sign({
+              id: req.body.seller_phone,
+            }, constant.TOKEN_SECRET, {
+              expiresIn: constant.TOKENTIME // 30 days
+            });
+            res.status(200).send({
+              "code":200,
+              "role": 'seller',
+              "seller_phone":req.body.seller_phone,
+              "token":token
+            });
+          } else {
+            res.status(200).send({
+              "code":200,
+              "message":"password does not match"
+            });
+          }
+
+        } else if (!result.length) {
           res.status(200).send({
             "code":200,
-            "role": 'seller',
-            "seller_phone":req.body.seller_phone,
-            "token":token
-          });
-        } else {
-          res.status(200).send({
-            "code":200,
-            "message":"password dose not match"
+            "message":"phone does not exists"
           });
         }
+      } else {
+       res.status(400).send(err);
+     }
+    });
+  });
 
-      } else if (!result.length) {
+  api.post('/seller/device_token', (req, res) => {
+    Seller.UpdateDeviceToken(req.body.device_token, req.body.seller_phone, function(err, result){
+
+      if(!result.length){
         res.status(200).send({
-          "code":200,
-          "message":"phone dose not exists"
+          "code":'SELLER_PHONE_NOT_FOUND',
+          "message":"check your seller_phone"
         });
       } else {
-        res.status(400).send(err);
+        if(!req.body.device_token){
+          res.status(200).send({
+            "code":'DEVICE_TOKEN_NULL',
+            "message":"check your device_token"
+          });
+        } else if (!req.body.seller_phone) {
+          res.status(200).send({
+            "code":'SELLER_PHONE_NULL',
+            "message":"check your seller_phone"
+          });
+        } else {
+          if(!err){
+            res.status(200).send({
+              "code":200,
+              "message":"device_token update successful"
+            });
+          } else {
+            res.status(400).send(err);
+          }
+        }
       }
     });
   });

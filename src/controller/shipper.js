@@ -64,33 +64,33 @@ export default({ config, db}) => {
   api.post('/shipper/login', (req, res) => {
 
     Shipper.Login(req.body.shipper_phone, function(err, result){
+      if(!err){
+        if(result.length > 0){
+          if(bcrypt.compareSync(req.body.shipper_password, result[0].shipper_password)){
+            let token = jwt.sign({
+              id: req.body.shipper_phone,
+            }, constant.TOKEN_SECRET, {
+              expiresIn: constant.TOKENTIME // 30 days
+            });
+            res.status(200).send({
+              "code":200,
+              "role": 'shipper',
+              "shipper_phone":req.body.shipper_phone,
+              "token":token
+            });
+          } else {
+            res.status(200).send({
+              "code":200,
+              "message":"password does not match"
+            });
+          }
 
-      if(result.length > 0){
-
-        if(bcrypt.compareSync(req.body.shipper_password, result[0].shipper_password)){
-          let token = jwt.sign({
-            id: req.body.shipper_phone,
-          }, constant.TOKEN_SECRET, {
-            expiresIn: constant.TOKENTIME // 30 days
-          });
+        } else if (!result.length) {
           res.status(200).send({
             "code":200,
-            "role": 'shipper',
-            "shipper_phone":req.body.shipper_phone,
-            "token":token
-          });
-        } else {
-          res.status(200).send({
-            "code":200,
-            "message":"password dose not match"
+            "message":"phone does not exists"
           });
         }
-
-      } else if (!result.length) {
-        res.status(200).send({
-          "code":200,
-          "message":"phone dose not exists"
-        });
       } else {
         res.status(400).send(err);
       }
@@ -98,16 +98,37 @@ export default({ config, db}) => {
   });
 
   api.post('/shipper/device_token', (req, res) => {
-    Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
-      if(!err){
+
+    if(!result.length){
+      res.status(200).send({
+        "code":'SHIPPER_PHONE_NOT_FOUND',
+        "message":"check your shipper_phone"
+      });
+    } else {
+      if(!req.body.device_token){
         res.status(200).send({
-          "code":200,
-          "message":"device_token update successful"
+          "code":'DEVICE_TOKEN_NULL',
+          "message":"check your device_token"
+        });
+      } else if (!req.body.shipper_phone) {
+        res.status(200).send({
+          "code":'SHIPPER_PHONE_NULL',
+          "message":"check your shipper_phone"
         });
       } else {
-        res.status(400).send(err);
+        Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
+          if(!err){
+            res.status(200).send({
+              "code":200,
+              "message":"device_token update successful"
+            });
+          } else {
+            res.status(400).send(err);
+          }
+        });
       }
-    });
+    }
+
   });
 
 

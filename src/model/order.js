@@ -11,7 +11,7 @@ let Order = {
     return connection.query('SELECT * from `order` WHERE status_flg = 1 ORDER BY updatedAt DESC', callback);
   },
 
-  CreateOrder:function(order, callback) {
+  Create:function(order, callback) {
     return connection.query('INSERT INTO `order` SET ?', order, callback);
   },
 
