@@ -107,22 +107,23 @@ export default({ config, db}) => {
   });
 
   api.post('/seller/device_token', (req, res) => {
-    Seller.UpdateDeviceToken(req.body.device_token, req.body.seller_phone, function(err, result){
 
-      if(!result.length){
-        res.status(200).send({
-          "code":'SELLER_PHONE_NOT_FOUND',
-          "message":"check your seller_phone"
-        });
-      } else {
-        if(!req.body.device_token){
+    if(!req.body.device_token){
+      res.status(200).send({
+        "code":'DEVICE_TOKEN_NULL',
+        "message":"check your device_token"
+      });
+    } else if (!req.body.seller_phone) {
+      res.status(200).send({
+        "code":'SELLER_PHONE_NULL',
+        "message":"check your seller_phone"
+      });
+    } else {
+      Seller.UpdateDeviceToken(req.body.device_token, req.body.seller_phone, function(err, result){
+
+        if(!result.length){
           res.status(200).send({
-            "code":'DEVICE_TOKEN_NULL',
-            "message":"check your device_token"
-          });
-        } else if (!req.body.seller_phone) {
-          res.status(200).send({
-            "code":'SELLER_PHONE_NULL',
+            "code":'SELLER_PHONE_NOT_FOUND',
             "message":"check your seller_phone"
           });
         } else {
@@ -135,8 +136,8 @@ export default({ config, db}) => {
             res.status(400).send(err);
           }
         }
-      }
-    });
+      });
+    }
   });
 
   return api;

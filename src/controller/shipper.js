@@ -99,36 +99,36 @@ export default({ config, db}) => {
 
   api.post('/shipper/device_token', (req, res) => {
 
-    if(!result.length){
+    if(!req.body.device_token){
       res.status(200).send({
-        "code":'SHIPPER_PHONE_NOT_FOUND',
+        "code":'DEVICE_TOKEN_NULL',
+        "message":"check your device_token"
+      });
+    } else if (!req.body.shipper_phone) {
+      res.status(200).send({
+        "code":'SHIPPER_PHONE_NULL',
         "message":"check your shipper_phone"
       });
     } else {
-      if(!req.body.device_token){
-        res.status(200).send({
-          "code":'DEVICE_TOKEN_NULL',
-          "message":"check your device_token"
-        });
-      } else if (!req.body.shipper_phone) {
-        res.status(200).send({
-          "code":'SHIPPER_PHONE_NULL',
-          "message":"check your shipper_phone"
-        });
-      } else {
-        Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
-          if(!err){
+      Shipper.UpdateDeviceToken(req.body.device_token, req.body.shipper_phone, function(err, result){
+
+        if(!err){
+          if(!result.length){
+            res.status(200).send({
+              "code":'SHIPPER_PHONE_NOT_FOUND',
+              "message":"check your shipper_phone"
+            });
+          } else {
             res.status(200).send({
               "code":200,
               "message":"device_token update successful"
             });
-          } else {
-            res.status(400).send(err);
           }
-        });
-      }
+        } else {
+          res.status(400).send(err);
+        }
+      });
     }
-
   });
 
 
