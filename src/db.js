@@ -8,7 +8,7 @@ import mysql from 'mysql'
 });*/
 
 let connection = mysql.createConnection({
-  host: "mydbshippy.ceglho9jw8iq.us-west-2.rds.amazonaws.com",
+  host: "shippy.cum65ahmr9e4.us-west-2.rds.amazonaws.com",
   user: "shippy",
   password: "12345678",
   database: "Shippy"
