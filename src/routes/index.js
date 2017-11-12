@@ -14,7 +14,7 @@ import address from '../controller/address';
 let router = express();
 
 //connect to db
-connection.connect(db => {
+connection.getConnection(db => {
 
   //internal middleware
   router.use(middleware({ config, db }));
