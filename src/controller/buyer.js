@@ -55,7 +55,7 @@ export default({ config, db}) => {
       } else {
         res.status(400).send(err);
       }
-      
+
     });
   });
 
