@@ -9,14 +9,14 @@ export default {
       category_id: Joi.number().integer().min(1).max(3).required(),
       order_price: Joi.number().integer().min(10000).max(10000000).allow(''),
       order_fee: Joi.number().integer().min(10000).max(10000000).required(),
-      order_description: Joi.string(),
+      order_description: Joi.string().allow(''),
       from_longitude: Joi.number().required(),
       from_latitude: Joi.number().required(),
       to_longitude: Joi.number().required(),
       to_latitude: Joi.number().required(),
-      from_name: Joi.string(),
-      to_name: Joi.string(),
-      distance: Joi.number().required(),
+      from_name: Joi.string().required(),
+      to_name: Joi.string().required(),
+      distance: Joi.string().required(),
       estimated_time: Joi.string().required()
     }
   },
