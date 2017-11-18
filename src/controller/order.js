@@ -153,7 +153,11 @@ export default({ config, db}) => {
       "from_longitude": req.body.from_longitude,
       "from_latitude": req.body.from_latitude,
       "to_longitude": req.body.to_longitude,
-      "to_latitude": req.body.to_latitude
+      "to_latitude": req.body.to_latitude,
+      "from_name": req.body.from_name,
+      "to_name": req.body.to_name,
+      "distance": req.body.distance,
+      "estimated_time": req.body.estimated_time
     }
     Order.Create(order, function(err, result){
       if(!err){

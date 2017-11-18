@@ -13,7 +13,11 @@ export default {
       from_longitude: Joi.number().required(),
       from_latitude: Joi.number().required(),
       to_longitude: Joi.number().required(),
-      to_latitude: Joi.number().required()
+      to_latitude: Joi.number().required(),
+      from_name: Joi.string(),
+      to_name: Joi.string(),
+      distance: Joi.number().required(),
+      estimated_time: Joi.string().required()
     }
   },
 
