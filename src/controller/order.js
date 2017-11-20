@@ -170,5 +170,52 @@ export default({ config, db}) => {
       }
     });
   });
+
+  api.get('/order/seller_history/:sellerId/:statusId', (req, res) => {
+
+    Order.GetSellerHistory(req.params.sellerId, req.params.statusId, function(err, result){
+                if(err) {
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
+                } else if (!result.length){
+                  res.status(200).send({
+                    "code": 'ORDER_NOT_FOUND',
+                    "message": 'Can not find this order.'
+                  });
+                } else {
+                  res.status(200).send({
+                    "code":200,
+                    "order":result
+                  });
+                }
+    });
+
+  });
+
+  api.get('/order/shipper_history/:shipperId/:statusId', (req, res) => {
+
+    Order.GetShipperHistory(req.params.shipperId, req.params.statusId, function(err, result){
+                if(err) {
+                  res.status(400).send({
+                    "code":400,
+                    "error":err
+                  });
+                } else if (!result.length){
+                  res.status(200).send({
+                    "code": 'ORDER_NOT_FOUND',
+                    "message": 'Can not find this order.'
+                  });
+                } else {
+                  res.status(200).send({
+                    "code":200,
+                    "order":result
+                  });
+                }
+    });
+
+  });
+
   return api;
 }

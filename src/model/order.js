@@ -21,6 +21,14 @@ let Order = {
 
   ReceiveOrder:function(id, orderUpdate, callback){
     return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [orderUpdate, id], callback);
+  },
+
+  GetSellerHistory:function(sellerId, statusId, callback){
+    return connection.query('SELECT * from `order` WHERE seller_phone = ? and status_flg = ?', [sellerId, statusId], callback);
+  },
+
+  GetShipperHistory:function(shipperId, statusId, callback){
+    return connection.query('SELECT * from `order` WHERE shipper_phone = ? and status_flg = ?', [shipperId, statusId], callback);
   }
 
 };
