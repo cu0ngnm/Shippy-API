@@ -28,6 +28,13 @@ export default {
       shipper_phone: Joi.string().regex(/^[0-9]{5,15}$/).required(),
       status_flg: Joi.number().integer().min(1).max(3).required()
     }
+  },
+
+  getHistory: {
+    params: {
+      phone: Joi.string().regex(/^[0-9]{5,15}$/).required(),
+      statusId: Joi.number().integer().min(0).max(3).required()
+    }
   }
 
 };

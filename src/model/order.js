@@ -29,6 +29,10 @@ let Order = {
 
   GetShipperHistory:function(shipperId, statusId, callback){
     return connection.query('SELECT * from `order` WHERE shipper_phone = ? and status_flg = ?', [shipperId, statusId], callback);
+  },
+
+  Finish:function(finish_order, id, callback){
+    return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [finish_order, id], callback);
   }
 
 };
