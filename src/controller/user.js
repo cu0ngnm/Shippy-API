@@ -62,7 +62,7 @@ export default({ config, db}) => {
         "message":"account_id can be null"
       });
     } else {
-      Shipper.Logout(req.body.access_token, req.body.device_token, req.body.account_id, function(err, result){
+      User.Logout(req.body.access_token, req.body.device_token, req.body.account_id, function(err, result){
         if(!err){
           if(result.affectedRows == 0){
             res.status(200).send({
