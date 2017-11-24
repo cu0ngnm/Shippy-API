@@ -103,7 +103,7 @@ export default({ config, db}) => {
                 "message":"Nhận đơn thành công!"
               });
 
-              Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
+              User.GetDeviceToken(req.body.seller_phone, function(err, token){
                 if(!err){
                   if(!token.length){
                     console.log('device_token not found. Can not sent notification');
@@ -161,7 +161,7 @@ export default({ config, db}) => {
   });
 
   // '/v1/shippy/order/create' - POST - add new record
-  api.post('/order/create', verifyToken, validate(validations.createOrder), (req, res) => {
+  api.post('/order/create', (req, res) => {
 
     let order = {
       "seller_phone": req.body.seller_phone,

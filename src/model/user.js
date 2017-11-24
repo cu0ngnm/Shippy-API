@@ -18,7 +18,11 @@ let User = {
 
   Logout:function(access_token, device_token, account_id, callback)  {
     return connection.query('UPDATE user SET access_token = ?, device_token = ? WHERE account_id = ?', [access_token, device_token, account_id], callback);
-  }
+  },
+
+  GetDeviceToken:function(account_id, callback){
+    return connection.query('SELECT device_token from user WHERE account_id = ?', account_id, callback);
+  },
 
 };
 module.exports = User;
