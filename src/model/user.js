@@ -13,7 +13,11 @@ let User = {
   },
 
   Login:function(access_token, device_token, account_id, callback) {
-    return connection.query('UPDATE user SET access_token = ? WHERE account_id = ? ', [access_token, device_token, account_id], callback);
+    return connection.query('UPDATE user SET access_token = ?, device_token = ? WHERE account_id = ? ', [access_token, device_token, account_id], callback);
+  },
+
+  Logout:function(access_token, device_token, account_id, callback)  {
+    return connection.query('UPDATE user SET access_token = ?, device_token = ? WHERE account_id = ?', [access_token, device_token, account_id], callback);
   }
 
 };

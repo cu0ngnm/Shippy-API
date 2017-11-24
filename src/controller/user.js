@@ -42,7 +42,7 @@ export default({ config, db}) => {
           if(!err){
             res.status(201).send({
               "code":201,
-              "message":"Register successful."
+              "message":"Register successful!"
             });
           } else {
             res.status(400).send(err);
@@ -52,6 +52,34 @@ export default({ config, db}) => {
       }
 
     });
+  });
+
+  api.post('/user/logout', (req, res) => {
+    console.log('fcm token: ' + req.body.device_token);
+    if (!req.body.account_id) {
+      res.status(200).send({
+        "code":'USER_NULL',
+        "message":"account_id can be null"
+      });
+    } else {
+      Shipper.Logout(req.body.access_token, req.body.device_token, req.body.account_id, function(err, result){
+        if(!err){
+          if(result.affectedRows == 0){
+            res.status(200).send({
+              "code":'USER_NOT_FOUND',
+              "message":"Check your account_id"
+            });
+          } else {
+            res.status(200).send({
+              "code":200,
+              "message":"Logout successful!"
+            });
+          }
+        } else {
+          res.status(400).send(err);
+        }
+      });
+    }
   });
 
   return api;
