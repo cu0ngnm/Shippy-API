@@ -193,7 +193,7 @@ export default({ config, db}) => {
 
   });
 
-  api.get('/order/history/:roll/:phone/:statusId', validate(validations.getHistory), (req, res) => {
+  api.get('/order/history/:roll/:phone/:statusId', (req, res) => {
 
     if(req.params.roll == 'seller'){
       Order.GetSellerHistory(req.params.phone, req.params.statusId, function(err, result){
