@@ -9,6 +9,7 @@ import Storage from '@google-cloud/storage';
 const format = require('util').format;
 
 import Order from '../model/order';
+import User from '../model/user';
 import Seller from '../model/seller';
 import config from '../config';
 import verifyToken from '../middleware/verifyToken';
