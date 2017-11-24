@@ -161,7 +161,7 @@ export default({ config, db}) => {
   });
 
   // '/v1/shippy/order/create' - POST - add new record
-  api.post('/order/create', verifyToken, validate(validations.createOrder), (req, res, next) => {
+  api.post('/order/create', verifyToken, validate(validations.createOrder), (req, res) => {
 
     let order = {
       "seller_phone": req.body.seller_phone,
@@ -170,7 +170,6 @@ export default({ config, db}) => {
       "order_price": req.body.order_price,
       "order_fee": req.body.order_fee,
       "order_description": req.body.order_description,
-      "image_url": publicUrl,
       "from_longitude": req.body.from_longitude,
       "from_latitude": req.body.from_latitude,
       "to_longitude": req.body.to_longitude,
@@ -334,6 +333,8 @@ export default({ config, db}) => {
 
     blobStream.end(req.file.buffer);
   });
+
+
 
   return api;
 }
