@@ -9,6 +9,7 @@ import order from '../controller/order';
 import category from '../controller/category';
 import shipper from '../controller/shipper';
 import address from '../controller/address';
+import user from '../controller/user';
 
 
 let router = express();
@@ -26,6 +27,7 @@ connection.getConnection(db => {
   router.use('/shippy', category({ config, db }));
   router.use('/shippy', shipper({ config, db }));
   router.use('/shippy', address({ config, db }));
+  router.use('/shippy', user({ config, db }));
 
 });
 

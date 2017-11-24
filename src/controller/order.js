@@ -294,24 +294,6 @@ export default({ config, db}) => {
 
   api.post('/upload', multer.single('file'), (req, res, next) => {
 
-    // if (req.file) {
-    //   // Create a new blob in the bucket and upload the file data.
-    //   const blob = bucket.file(req.file.originalname);
-    //   const blobStream = blob.createWriteStream();
-    //
-    //   blobStream.on('error', (err) => {
-    //     next(err);
-    //   });
-    //
-    //   blobStream.on('finish', () => {
-    //     // The public URL can be used to directly access the file via HTTP.
-    //     const publicUrl = format(`https://storage.googleapis.com/${bucket.name}/${blob.name}`);
-    //     console.log(publicUrl);
-    //   });
-    //
-    //   blobStream.end(req.file.buffer);
-    // }
-
     if (!req.file) {
       res.status(400).send('No file uploaded.');
       return;
@@ -334,7 +316,53 @@ export default({ config, db}) => {
     blobStream.end(req.file.buffer);
   });
 
+  // '/v1/shippy/order/cancel'
+  api.post('/order/cancel/', (req, res) => {
 
+    Order.CheckStatus(req.body.order_code, function(err, statusResult){
+      console.log(statusResult);
+      if(!statusResult.length){
+        res.status(200).send({
+          "code": 'ORDER_CODE_NOT_FOUND',
+          "message": 'Can not find this order.'
+        });
+      } else {
+        if(statusResult[0].status_flg == constant.WAITTING_ORDER){
+
+          let orderUpdate = {
+            "shipper_phone": '',
+            "status_flg": req.body.status_flg
+          }
+          // Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+          //   if(!err){
+          //     res.status(200).send({
+          //       "code":200,
+          //       "message":"Order finish Successfully!"
+          //     });
+          //   } else {
+          //     res.status(400).send(err);
+          //   }
+          //
+          // }
+
+
+        } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
+          res.status(200).send({
+            "code":200,
+            "message":"Đơn hàng đã có người nhận!"
+          });
+        } else if (statusResult[0].status_flg == constant.CANCELED_ORDER){
+          res.status(200).send({
+            "code":200,
+            "message":"Đơn hàng đã bị huỷ bởi seller!"
+          });
+        } else {
+          res.status(400).send(err);
+        }
+      }
+    });
+
+  });
 
   return api;
 }

@@ -33,6 +33,10 @@ let Order = {
 
   Finish:function(finish_order, id, callback){
     return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [finish_order, id], callback);
+  },
+
+  Cancel:function(orderUpdate, id, callback){
+    return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [orderUpdate, id], callback);
   }
 
 };
