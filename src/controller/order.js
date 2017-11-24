@@ -79,7 +79,7 @@ export default({ config, db}) => {
   });
 
   // '/v1/shippy/order/receive_order/'
-  api.post('/order/receive_order/', validate(validations.receiveOrder), (req, res) => {
+  api.post('/order/receive_order/', (req, res) => {
 
     Order.CheckStatus(req.body.order_code, function(err, statusResult){
       console.log(statusResult);
