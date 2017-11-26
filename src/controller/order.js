@@ -459,10 +459,10 @@ export default({ config, db}) => {
             });
           }
 
-          res.status(200).send({
-            "code":200,
-            "message":"Đơn hàng đã có người nhận!"
-          });
+          // res.status(200).send({
+          //   "code":200,
+          //   "message":"Đơn hàng đã có người nhận!"
+          // });
         } else if (statusResult[0].status_flg == constant.CANCELED_ORDER){
           res.status(200).send({
             "code":200,
