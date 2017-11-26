@@ -193,9 +193,9 @@ export default({ config, db}) => {
 
   });
 
-  api.get('/order/history/:roll/:phone/:statusId', (req, res) => {
+  api.get('/order/history/:role/:phone/:statusId', (req, res) => {
 
-    if(req.params.roll == 'seller'){
+    if(req.params.role == 'seller'){
       Order.GetSellerHistory(req.params.phone, req.params.statusId, function(err, result){
                   if(err) {
                     res.status(400).send({
@@ -214,7 +214,7 @@ export default({ config, db}) => {
                     });
                   }
       });
-    } else if (req.params.roll == 'shipper') {
+    } else if (req.params.role == 'shipper') {
       Order.GetShipperHistory(req.params.phone, req.params.statusId, function(err, result){
                   if(err) {
                     res.status(400).send({
@@ -349,7 +349,7 @@ export default({ config, db}) => {
 
 
         } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
-          if(req.body.roll == 'seller'){
+          if(req.body.role == 'seller'){
 
             if(req.body.action == 'refresh'){
               let status_flg = constant.CANCELED_ORDER
@@ -407,7 +407,7 @@ export default({ config, db}) => {
             });
 
 
-          } else if (req.body.roll == 'shipper') {
+          } else if (req.body.role == 'shipper') {
 
             let orderUpdate = {
               "shipper_phone": '',
