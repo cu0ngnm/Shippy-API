@@ -334,7 +334,7 @@ export default({ config, db}) => {
             "shipper_phone": '',
             "status_flg": constant.CANCELED_ORDER
           }
-          Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+          Order.Cancel(orderUpdate, req.body.order_code, function(err, result){
             if(!err){
               res.status(200).send({
                 "code":200,
@@ -362,7 +362,7 @@ export default({ config, db}) => {
               "status_flg": status_flg
             }
 
-            Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+            Order.Cancel(orderUpdate, req.body.order_code, function(err, result){
               if(!err){
                 res.status(200).send({
                   "code":200,
@@ -414,7 +414,7 @@ export default({ config, db}) => {
               "status_flg": constant.WAITTING_ORDER
             }
 
-            Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+            Order.Cancel(orderUpdate, req.body.order_code, function(err, result){
               if(!err){
                 res.status(200).send({
                   "code":200,
