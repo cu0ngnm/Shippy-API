@@ -255,7 +255,7 @@ export default({ config, db}) => {
           "message":"Order finish Successfully!"
         });
 
-        Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
+        User.GetDeviceToken(req.body.seller_phone, function(err, token){
           if(!err){
             if(!token.length){
               console.log('device_token not found. Can not sent notification');
@@ -332,22 +332,133 @@ export default({ config, db}) => {
 
           let orderUpdate = {
             "shipper_phone": '',
-            "status_flg": req.body.status_flg
+            "status_flg": constant.CANCELED_ORDER
           }
-          // Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
-          //   if(!err){
-          //     res.status(200).send({
-          //       "code":200,
-          //       "message":"Order finish Successfully!"
-          //     });
-          //   } else {
-          //     res.status(400).send(err);
-          //   }
-          //
-          // }
+          Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+            if(!err){
+              res.status(200).send({
+                "code":200,
+                "message":"Order Cancel Successful!"
+              });
+
+            } else {
+              res.status(400).send(err);
+            }
+
+          });
 
 
         } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
+          if(req.body.roll == 'seller'){
+
+            if(req.body.action == 'refresh'){
+              let status_flg = constant.CANCELED_ORDER
+            } else {
+              let status_flg = constant.WAITTING_ORDER
+            }
+
+            let orderUpdate = {
+              "shipper_phone": '',
+              "status_flg": status_flg
+            }
+
+            Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+              if(!err){
+                res.status(200).send({
+                  "code":200,
+                  "message":"Order Cancel Successful!"
+                });
+
+                User.GetDeviceToken(req.body.shipper_phone, function(err, token){
+                  if(!err){
+                    if(!token.length){
+                      console.log('device_token not found. Can not sent notification');
+                    } else {
+                      console.log(token);
+                      let message = {
+                        to: token[0].device_token, // required fill with device token or topics
+                        //collapse_key: 'your_collapse_key',
+                        //data: {
+                        //    your_custom_data_key: 'your_custom_data_value'
+                        //},
+                        notification: {
+                            //title: 'Shippy',
+                            body: 'Đơn hàng mã ' + req.body.order_code +' đã bị hủy bởi seller!'
+                        }
+                      };
+                      fcm.send(message, function(err, response){
+                        if (err) {
+                          console.log("Something has gone wrong: ", err);
+                        } else {
+                          console.log("Successfully sent to user " + req.body.shipper_phone + " with response: ", response);
+                        }
+                      });
+                    }
+
+                  } else {
+                    console.log(err);
+                  }
+                });
+
+              } else {
+                res.status(400).send(err);
+              }
+
+            });
+
+
+          } else if (req.body.roll == 'shipper') {
+
+            let orderUpdate = {
+              "shipper_phone": '',
+              "status_flg": constant.WAITTING_ORDER
+            }
+
+            Order.Cancel(req.body.order_code, orderUpdate, function(err, result){
+              if(!err){
+                res.status(200).send({
+                  "code":200,
+                  "message":"Order Cancel Successful!"
+                });
+
+                User.GetDeviceToken(req.body.seller_phone, function(err, token){
+                  if(!err){
+                    if(!token.length){
+                      console.log('device_token not found. Can not sent notification');
+                    } else {
+                      console.log(token);
+                      let message = {
+                        to: token[0].device_token, // required fill with device token or topics
+                        //collapse_key: 'your_collapse_key',
+                        //data: {
+                        //    your_custom_data_key: 'your_custom_data_value'
+                        //},
+                        notification: {
+                            //title: 'Shippy',
+                            body: 'Đơn hàng mã ' + req.body.order_code +' đã bị hủy bởi shipper! Đơn hàng này sẽ được chuyển về trạng thái chờ!'
+                        }
+                      };
+                      fcm.send(message, function(err, response){
+                        if (err) {
+                          console.log("Something has gone wrong: ", err);
+                        } else {
+                          console.log("Successfully sent to user " + req.body.seller_phone + " with response: ", response);
+                        }
+                      });
+                    }
+
+                  } else {
+                    console.log(err);
+                  }
+                });
+
+              } else {
+                res.status(400).send(err);
+              }
+
+            });
+          }
+
           res.status(200).send({
             "code":200,
             "message":"Đơn hàng đã có người nhận!"
@@ -355,7 +466,7 @@ export default({ config, db}) => {
         } else if (statusResult[0].status_flg == constant.CANCELED_ORDER){
           res.status(200).send({
             "code":200,
-            "message":"Đơn hàng đã bị huỷ bởi seller!"
+            "message":"Đơn hàng này đã bị hủy rồi!"
           });
         } else {
           res.status(400).send(err);
