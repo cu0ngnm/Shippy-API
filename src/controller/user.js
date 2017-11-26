@@ -3,7 +3,10 @@ import {  Router } from 'express';
 import bodyParser from 'body-parser';
 import User from '../model/user';
 import config from '../config';
+import jwt from 'jsonwebtoken';
+import verifyToken from '../middleware/verifyToken';
 import constant from '../utilities/constant';
+import bcrypt from'bcrypt';
 
 const salt = bcrypt.genSaltSync(10);
 
