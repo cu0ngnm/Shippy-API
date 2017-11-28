@@ -351,12 +351,14 @@ export default({ config, db}) => {
         } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
           if(req.body.role == 'seller'){
 
-            if(req.body.action == 'refresh'){
-              let status_flg = constant.CANCELED_ORDER
-            } else {
-              let status_flg = constant.WAITTING_ORDER
-            }
+            let status_flg = "";
 
+            if(req.body.action == 'refresh'){
+              status_flg = constant.WAITTING_ORDER
+            } else {
+              status_flg = constant.CANCELED_ORDER
+            }
+            console.log(status_flg);
             let orderUpdate = {
               "shipper_phone": '',
               "status_flg": status_flg
