@@ -34,7 +34,7 @@ let Order = {
       '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` on `order`.seller_phone = seller.seller_phone WHERE `order`.seller_phone = ? and `order`.status_flg = ?', [sellerId, statusId], callback);
     } else {
       return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
-      '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone and `order`.shipper_phone = shipper.shipper_phone WHERE `order`.shipper_phone = ? and `order`.status_flg = ?', [sellerId, statusId], callback);
+      '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone and `order`.shipper_phone = shipper.shipper_phone WHERE `order`.seller_phone = ? and `order`.status_flg = ?', [sellerId, statusId], callback);
     }
 
   },

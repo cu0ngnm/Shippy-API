@@ -434,7 +434,7 @@ export default({ config, db}) => {
           });
 
 
-        } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
+        } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER){
           if(req.body.role == 'seller'){
 
             let status_flg = "";
@@ -454,7 +454,7 @@ export default({ config, db}) => {
               if(!err){
                 res.status(200).send({
                   "code":200,
-                  "message":"Order Cancel Successful!"
+                  "message":"Order Cancel/Refuse Successful!"
                 });
 
                 User.GetDeviceToken(req.body.shipper_phone, function(err, token){
@@ -555,6 +555,11 @@ export default({ config, db}) => {
           res.status(200).send({
             "code":200,
             "message":"Đơn hàng này đã bị hủy rồi!"
+          });
+        } else if (statusResult[0].status_flg == constant.FINISHED_ORDER) {
+          res.status(200).send({
+            "code":200,
+            "message":"Đơn hàng này đã hoàn thành rồi!"
           });
         } else {
           res.status(400).send(err);
