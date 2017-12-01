@@ -12,7 +12,8 @@ import Order from '../model/order';
 import User from '../model/user';
 import Seller from '../model/seller';
 import config from '../config';
-import verifyToken from '../middleware/verifyToken';
+//import verifyToken from '../middleware/verifyToken';
+import verifyToken from '../middleware/revifyFBAccessToken';
 import constant from '../utilities/constant';
 import validations from '../validation/order';
 
@@ -37,7 +38,7 @@ const bucket = storage.bucket(constant.BUCKET_NAME);
 export default({ config, db}) => {
   let api = Router();
 
-  api.get('/order/:id', (req, res) => {
+  api.get('/order/:id',verifyToken, (req, res) => {
     Order.GetByID(req.params.id, function(err, result){
                 if(err) {
                   res.status(400).send({
@@ -79,8 +80,7 @@ export default({ config, db}) => {
     });
   });
 
-  // '/v1/shippy/order/receive_order/'
-  api.post('/order/receive_order/', (req, res) => {
+  api.post('/order/update/', (req, res) => {
 
     Order.CheckStatus(req.body.order_code, function(err, statusResult){
       console.log(statusResult);
@@ -94,45 +94,14 @@ export default({ config, db}) => {
 
           let orderUpdate = {
             "shipper_phone" : req.body.shipper_phone,
-            "status_flg" : req.body.status_flg
+            "status_flg" : constant.RECIEVED_ORDER
           }
 
-          Order.ReceiveOrder(req.body.order_code, orderUpdate, function(err, result){
+          Order.Update(req.body.order_code, orderUpdate, function(err, result){
             if(!err){
               res.status(200).send({
                 "code":200,
-                "message":"Nhận đơn thành công!"
-              });
-
-              User.GetDeviceToken(req.body.seller_phone, function(err, token){
-                if(!err){
-                  if(!token.length){
-                    console.log('device_token not found. Can not sent notification');
-                  } else {
-                    console.log(token);
-                    let message = {
-                      to: token[0].device_token, // required fill with device token or topics
-                      //collapse_key: 'your_collapse_key',
-                      //data: {
-                      //    your_custom_data_key: 'your_custom_data_value'
-                      //},
-                      notification: {
-                          //title: 'Shippy',
-                          body: 'Đơn hàng mã ' + req.body.order_code +' đã được nhận. Shipper sẽ liên lạc với bạn trong ít phút nữa!'
-                      }
-                    };
-                    fcm.send(message, function(err, response){
-                      if (err) {
-                        console.log("Something has gone wrong: ", err);
-                      } else {
-                        console.log("Successfully sent to user " + req.body.seller_phone + " with response: ", response);
-                      }
-                    });
-                  }
-
-                } else {
-                  console.log(err);
-                }
+                "message":"Cập nhật thành công!"
               });
             } else {
               res.status(400).send(err);
@@ -140,15 +109,10 @@ export default({ config, db}) => {
 
           });
 
-        } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
+        } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER || statusResult[0].status_flg == constant.CANCELED_ORDER){
           res.status(200).send({
             "code":200,
-            "message":"Đơn hàng đã có người nhận!"
-          });
-        } else if (statusResult[0].status_flg == constant.CANCELED_ORDER){
-          res.status(200).send({
-            "code":200,
-            "message":"Đơn hàng đã bị huỷ bởi seller!"
+            "message":"Không thể cập nhật đơn này!"
           });
         } else {
           res.status(200).send({
@@ -156,6 +120,103 @@ export default({ config, db}) => {
             "message": err
           });
         }
+      }
+    });
+
+  });
+
+  // '/v1/shippy/order/receive_order/'
+  api.post('/order/receive_order/', (req, res) => {
+
+    Order.CheckStatus(req.body.order_code, function(err, statusResult){
+      console.log(statusResult);
+      if(!statusResult.length){
+        res.status(200).send({
+          "code": 'ORDER_CODE_NOT_FOUND',
+          "message": 'Can not find this order.'
+        });
+      } else {
+        Order.GetNumberOfReceivingOrder(req.body.shipper_phone, function(err, result){
+          console.log('leng: ' + result.length);
+          if(err) {
+            res.status(400).send({
+              "code": 400,
+              "error": err
+            });
+          } else if (result.length > 3){
+            res.status(200).send({
+              "code": '200',
+              "message": 'Đạt đến giới hạn nhận đơn!'
+            });
+          } else {
+            if(statusResult[0].status_flg == constant.WAITTING_ORDER){
+
+              let orderUpdate = {
+                "shipper_phone" : req.body.shipper_phone,
+                "status_flg" : constant.RECIEVED_ORDER
+              }
+
+              Order.Receive(req.body.order_code, orderUpdate, function(err, result){
+                if(!err){
+                  res.status(200).send({
+                    "code":200,
+                    "message":"Nhận đơn thành công!"
+                  });
+
+                  User.GetDeviceToken(req.body.seller_phone, function(err, token){
+                    if(!err){
+                      if(!token.length){
+                        console.log('device_token not found. Can not sent notification');
+                      } else {
+                        console.log(token);
+                        let message = {
+                          to: token[0].device_token, // required fill with device token or topics
+                          //collapse_key: 'your_collapse_key',
+                          //data: {
+                          //    your_custom_data_key: 'your_custom_data_value'
+                          //},
+                          notification: {
+                              //title: 'Shippy',
+                              body: 'Đơn hàng mã ' + req.body.order_code +' đã được nhận. Shipper sẽ liên lạc với bạn trong ít phút nữa!'
+                          }
+                        };
+                        fcm.send(message, function(err, response){
+                          if (err) {
+                            console.log("Something has gone wrong: ", err);
+                          } else {
+                            console.log("Successfully sent to user " + req.body.seller_phone + " with response: ", response);
+                          }
+                        });
+                      }
+
+                    } else {
+                      console.log(err);
+                    }
+                  });
+                } else {
+                  res.status(400).send(err);
+                }
+
+              });
+
+            } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER || statusResult[0].status_flg == constant.FINISHED_ORDER){
+              res.status(200).send({
+                "code":200,
+                "message":"Đơn hàng đã có người nhận!"
+              });
+            } else if (statusResult[0].status_flg == constant.CANCELED_ORDER){
+              res.status(200).send({
+                "code":200,
+                "message":"Đơn hàng đã bị huỷ bởi seller!"
+              });
+            } else {
+              res.status(200).send({
+                "code":200,
+                "message": err
+              });
+            }
+          }
+        });
       }
     });
 
@@ -180,17 +241,28 @@ export default({ config, db}) => {
       "distance": req.body.distance,
       "estimated_time": req.body.estimated_time
     }
-    Order.Create(order, function(err, result){
-      if(!err){
-        res.status(201).send({
-          "code":201,
-          "message":"Order created!"
+    //GetNumberOfCreatedOrder
+    Order.GetNumberOfCreatedOrder(req.body.seller_phone, function(err, result){
+      if(err){
+        res.status(400).send(err);
+      } else if (result.length > 10){
+        res.status(200).send({
+          "code": '200',
+          "message": 'Đạt đến giới hạn tạo đơn!'
         });
       } else {
-        res.status(400).send(err);
+        Order.Create(order, function(err, result){
+          if(!err){
+            res.status(201).send({
+              "code":201,
+              "message":"Order created!"
+            });
+          } else {
+            res.status(400).send(err);
+          }
+        });
       }
     });
-
   });
 
   api.get('/order/history/:role/:phone/:statusId', (req, res) => {
@@ -269,7 +341,7 @@ export default({ config, db}) => {
                 //},
                 notification: {
                     //title: 'Shippy',
-                    body: 'Đơn hàng mã ' + req.body.order_code +' đã được giao thành công!'
+                    body: 'Đơn hàng mã ' + req.body.order_code +' đã được giao thành công lúc: ' + req.body.time_delivered
                 }
               };
               fcm.send(message, function(err, response){
@@ -295,10 +367,24 @@ export default({ config, db}) => {
 
   api.post('/upload', multer.single('file'), (req, res, next) => {
 
-    if (!req.file) {
-      res.status(400).send('No file uploaded.');
-      return;
-    }
+    // function decodeBase64Image(dataString) {
+    //   var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+    //     response = {};
+    //
+    //   if (matches.length !== 3) {
+    //     return new Error('Invalid input string');
+    //   }
+    //
+    //   response.type = matches[1];
+    //   response.data = new Buffer(matches[2], 'base64');
+    //
+    //   return response;
+    // }
+    //
+    // if (!req.file) {
+    //   res.status(400).send('No file uploaded.');
+    //   return;
+    // }
 
     // Create a new blob in the bucket and upload the file data.
     const blob = bucket.file(req.file.originalname);

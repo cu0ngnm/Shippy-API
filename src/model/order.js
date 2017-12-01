@@ -8,27 +8,34 @@ let Order = {
   },
 
   GetWaiting:function(callback){
-    return connection.query('SELECT * from `order` WHERE status_flg = 1 ORDER BY updatedAt DESC', callback);
+    return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, seller.seller_rating , shipper.shipper_rating, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
+    '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone or `order`.shipper_phone = shipper.shipper_phone WHERE `order`.status_flg = 1 ORDER BY `order`.updatedAt DESC', callback);
   },
 
   Create:function(order, callback) {
     return connection.query('INSERT INTO `order` SET ?', order, callback);
   },
 
+  Update:function(id, orderUpdate, callback){
+    return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [orderUpdate, id], callback);
+  },
+
   CheckStatus:function(id, callback){
     return connection.query('SELECT status_flg from `order` WHERE order_code = ?', id, callback);
   },
 
-  ReceiveOrder:function(id, orderUpdate, callback){
+  Receive:function(id, orderUpdate, callback){
     return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [orderUpdate, id], callback);
   },
 
   GetSellerHistory:function(sellerId, statusId, callback){
-    return connection.query('SELECT * from `order` WHERE seller_phone = ? and status_flg = ?', [sellerId, statusId], callback);
+    return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, seller.seller_rating , shipper.shipper_rating, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
+    '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone or `order`.shipper_phone = shipper.shipper_phone WHERE `order`.seller_phone = ? and `order`.status_flg = ?', [sellerId, statusId], callback);
   },
 
   GetShipperHistory:function(shipperId, statusId, callback){
-    return connection.query('SELECT * from `order` WHERE shipper_phone = ? and status_flg = ?', [shipperId, statusId], callback);
+    return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, seller.seller_rating , shipper.shipper_rating, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
+    '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone or `order`.shipper_phone = shipper.shipper_phone WHERE `order`.shipper_phone = ? and `order`.status_flg = ?', [shipperId, statusId], callback);
   },
 
   Finish:function(finish_order, id, callback){
@@ -37,7 +44,15 @@ let Order = {
 
   Cancel:function(orderUpdate, id, callback){
     return connection.query('UPDATE `order` SET ? WHERE order_code = ?', [orderUpdate, id], callback);
-  }
+  },
+
+  GetNumberOfReceivingOrder:function(phone, callback){
+    return connection.query('SELECT order_code from `order` WHERE shipper_phone = ? and status_flg = 2', phone, callback);
+  },
+
+  GetNumberOfCreatedOrder:function(phone, callback){
+    return connection.query('SELECT order_code from `order` WHERE seller_phone = ? and status_flg = 1', phone, callback);
+  },
 
 };
 module.exports = Order;
