@@ -18,7 +18,7 @@ export default({ config, db}) => {
 
   api.post('/user/login', (req, res) => {
     if(req.body.role == `seller`){
-      Seller.GetById(req.body.phone, function(err, result){
+      Seller.GetById(req.body.phone, function(err, user_result){
 
         if(result.length > 0){
           User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
@@ -26,6 +26,7 @@ export default({ config, db}) => {
             if(!err){
               res.status(200).send({
                 "code":200,
+                "user":user_result,
                 "message":"Login successful."
               });
             } else {
@@ -55,7 +56,7 @@ export default({ config, db}) => {
 
       });
     } else if (req.body.role == `shipper`) {
-      Shipper.GetById(req.body.phone, function(err, result){
+      Shipper.GetById(req.body.phone, function(err, user_result){
 
         if(result.length > 0){
           User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
@@ -63,6 +64,7 @@ export default({ config, db}) => {
             if(!err){
               res.status(200).send({
                 "code":200,
+                "user":user_result,
                 "message":"Login successful."
               });
             } else {
