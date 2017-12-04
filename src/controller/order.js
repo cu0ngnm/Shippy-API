@@ -93,8 +93,11 @@ export default({ config, db}) => {
         if(statusResult[0].status_flg == constant.WAITTING_ORDER){
 
           let orderUpdate = {
-            "shipper_phone" : req.body.shipper_phone,
-            "status_flg" : constant.RECIEVED_ORDER
+            "buyer_phone": req.body.buyer_phone,
+            "category_id": req.body.category_id,
+            "order_price": req.body.order_price,
+            "order_fee": req.body.order_fee,
+            "order_description": req.body.order_description,
           }
 
           Order.Update(req.body.order_code, orderUpdate, function(err, result){
