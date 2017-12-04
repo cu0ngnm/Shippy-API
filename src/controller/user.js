@@ -20,7 +20,7 @@ export default({ config, db}) => {
     if(req.body.role == `seller`){
       Seller.GetById(req.body.phone, function(err, user_result){
 
-        if(result.length > 0){
+        if(user_result.length > 0){
           User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
 
             if(!err){
@@ -34,7 +34,7 @@ export default({ config, db}) => {
             }
 
           });
-        } else if (result.length == 0) {
+        } else if (user_result.length == 0) {
 
           let user = {
             "seller_phone": req.body.phone,
@@ -58,7 +58,7 @@ export default({ config, db}) => {
     } else if (req.body.role == `shipper`) {
       Shipper.GetById(req.body.phone, function(err, user_result){
 
-        if(result.length > 0){
+        if(user_result.length > 0){
           User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
 
             if(!err){
@@ -72,7 +72,7 @@ export default({ config, db}) => {
             }
 
           });
-        } else if (result.length == 0) {
+        } else if (user_result.length == 0) {
 
           let user = {
             "shipper_phone": req.body.phone,
