@@ -21,7 +21,7 @@ export default({ config, db}) => {
       Seller.GetById(req.body.phone, function(err, user_result){
 
         if(user_result.length > 0){
-          User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
+          Seller.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
 
             if(!err){
               res.status(200).send({
@@ -59,7 +59,7 @@ export default({ config, db}) => {
       Shipper.GetById(req.body.phone, function(err, user_result){
 
         if(user_result.length > 0){
-          User.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
+          Shipper.Login(req.body.access_token, req.body.device_token, req.body.phone, function(err, result){
 
             if(!err){
               res.status(200).send({
