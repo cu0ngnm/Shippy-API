@@ -9,8 +9,8 @@ import Storage from '@google-cloud/storage';
 const format = require('util').format;
 
 import Order from '../model/order';
-import User from '../model/user';
 import Seller from '../model/seller';
+import Shipper from '../model/shipper';
 import config from '../config';
 //import verifyToken from '../middleware/verifyToken';
 import verifyToken from '../middleware/revifyFBAccessToken';
@@ -166,7 +166,7 @@ export default({ config, db}) => {
                     "message":"Nhận đơn thành công!"
                   });
 
-                  User.GetDeviceToken(req.body.seller_phone, function(err, token){
+                  Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
                     if(!err){
                       if(!token.length){
                         console.log('device_token not found. Can not sent notification');
@@ -330,7 +330,7 @@ export default({ config, db}) => {
           "message":"Order finish Successfully!"
         });
 
-        User.GetDeviceToken(req.body.seller_phone, function(err, token){
+        Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
           if(!err){
             if(!token.length){
               console.log('device_token not found. Can not sent notification');
@@ -449,7 +449,7 @@ export default({ config, db}) => {
             }
             console.log(status_flg);
             let orderUpdate = {
-              "shipper_phone": '',
+              "shipper_phone": 'NULL',
               "status_flg": status_flg
             }
 
@@ -460,12 +460,12 @@ export default({ config, db}) => {
                   "message":"Order Cancel/Refuse Successful!"
                 });
 
-                User.GetDeviceToken(req.body.shipper_phone, function(err, token){
+                Shipper.GetDeviceToken(req.body.shipper_phone, function(err, token){
                   if(!err){
+                    console.log(token);
                     if(!token.length){
                       console.log('device_token not found. Can not sent notification');
                     } else {
-                      console.log(token);
                       let message = {
                         to: token[0].device_token, // required fill with device token or topics
                         //collapse_key: 'your_collapse_key',
@@ -501,7 +501,7 @@ export default({ config, db}) => {
           } else if (req.body.role == 'shipper') {
 
             let orderUpdate = {
-              "shipper_phone": '',
+              "shipper_phone": 'NULL',
               "status_flg": constant.WAITTING_ORDER
             }
 
@@ -512,7 +512,7 @@ export default({ config, db}) => {
                   "message":"Order Cancel Successful!"
                 });
 
-                User.GetDeviceToken(req.body.seller_phone, function(err, token){
+                Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
                   if(!err){
                     if(!token.length){
                       console.log('device_token not found. Can not sent notification');
