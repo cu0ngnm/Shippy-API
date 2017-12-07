@@ -420,7 +420,7 @@ export default({ config, db}) => {
         if(statusResult[0].status_flg == constant.WAITTING_ORDER){
 
           let orderUpdate = {
-            "shipper_phone": '',
+            "shipper_phone": 'NULL',
             "status_flg": constant.CANCELED_ORDER
           }
           Order.Cancel(orderUpdate, req.body.order_code, function(err, result){
