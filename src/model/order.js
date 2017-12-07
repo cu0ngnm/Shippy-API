@@ -8,7 +8,7 @@ let Order = {
   },
 
   GetWaiting:function(callback){
-    return connection.query('select `order`.order_code, `order`.seller_phone, `order`.buyer_phone, `order`.shipper_phone, seller.seller_name, seller.seller_rating, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, '
+    return connection.query('select `order`.order_code, `order`.seller_phone, `order`.buyer_phone, `order`.shipper_phone, seller.seller_name, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, '
     +'`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` on `order`.seller_phone = seller.seller_phone WHERE `order`.status_flg = 1 ORDER BY `order`.updatedAt DESC', callback);
   },
 
@@ -40,7 +40,7 @@ let Order = {
   },
 
   GetShipperHistory:function(shipperId, statusId, callback){
-    return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, seller.seller_rating , shipper.shipper_rating, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
+    return connection.query('select `order`.order_code, `order`.seller_phone,  `order`.shipper_phone, seller.seller_name , shipper.shipper_name, `order`.order_price, `order`.order_fee, `order`.order_description, `order`.category_id, ' +
     '`order`.distance, `order`.estimated_time, `order`.from_name, `order`.to_name, `order`.image_url, `order`.status_flg, `order`.time_delivered, `order`.createdAt from `order` join `seller` join shipper on `order`.seller_phone = seller.seller_phone and `order`.shipper_phone = shipper.shipper_phone WHERE `order`.shipper_phone = ? and `order`.status_flg = ?', [shipperId, statusId], callback);
   },
 
