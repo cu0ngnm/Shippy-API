@@ -318,7 +318,7 @@ export default({ config, db}) => {
           "code": 'ORDER_CODE_NOT_FOUND',
           "message": 'Can not find this order.'
         });
-      }else if (statusResult[0].status_flg == constant.RECIEVED_ORDER) {
+      } else if (statusResult[0].status_flg == constant.RECIEVED_ORDER) {
         let finish_order = {
           "time_delivered": req.body.time_delivered,
           "status_flg": constant.FINISHED_ORDER
@@ -365,6 +365,11 @@ export default({ config, db}) => {
             res.status(400).send(err);
           }
 
+        });
+      } else {
+        res.status(200).send({
+          "code":200,
+          "message":"Bạn không thể hoàn tất đơn hàng này!"
         });
       }
     });
