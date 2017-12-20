@@ -312,59 +312,61 @@ export default({ config, db}) => {
   });
 
   api.post('/order/finish', (req, res) => {
-
-    let finish_order = {
-      "time_delivered": req.body.time_delivered,
-      "status_flg": constant.FINISHED_ORDER
-    }
-    Order.Finish(finish_order, req.body.order_code, function(err, result){
-
-      if(result.affectedRows == 0){
+    Order.CheckStatus(req.body.order_code, function(err, statusResult){
+      if(statusResult.affectedRows == 0){
         res.status(200).send({
           "code": 'ORDER_CODE_NOT_FOUND',
           "message": 'Can not find this order.'
         });
-      } else if(!err){
-        res.status(200).send({
-          "code":200,
-          "message":"Order finish Successfully!"
-        });
+      }else if (statusResult[0].status_flg == constant.RECIEVED_ORDER) {
+        let finish_order = {
+          "time_delivered": req.body.time_delivered,
+          "status_flg": constant.FINISHED_ORDER
+        }
+        Order.Finish(finish_order, req.body.order_code, function(err, result){
+            if(!err){
+            res.status(200).send({
+              "code":200,
+              "message":"Order finish Successfully!"
+            });
 
-        Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
-          if(!err){
-            if(!token.length){
-              console.log('device_token not found. Can not sent notification');
-            } else {
-              console.log(token);
-              let message = {
-                to: token[0].device_token, // required fill with device token or topics
-                //collapse_key: 'your_collapse_key',
-                //data: {
-                //    your_custom_data_key: 'your_custom_data_value'
-                //},
-                notification: {
-                    //title: 'Shippy',
-                    body: 'Đơn hàng mã ' + req.body.order_code +' đã được giao thành công lúc: ' + req.body.time_delivered
-                }
-              };
-              fcm.send(message, function(err, response){
-                if (err) {
-                  console.log("Something has gone wrong: ", err);
+            Seller.GetDeviceToken(req.body.seller_phone, function(err, token){
+              if(!err){
+                if(!token.length){
+                  console.log('device_token not found. Can not sent notification');
                 } else {
-                  console.log("Successfully sent to user " + req.body.seller_phone + " with response: ", response);
+                  console.log(token);
+                  let message = {
+                    to: token[0].device_token, // required fill with device token or topics
+                    //collapse_key: 'your_collapse_key',
+                    //data: {
+                    //    your_custom_data_key: 'your_custom_data_value'
+                    //},
+                    notification: {
+                        //title: 'Shippy',
+                        body: 'Đơn hàng mã ' + req.body.order_code +' đã được giao thành công lúc: ' + req.body.time_delivered
+                    }
+                  };
+                  fcm.send(message, function(err, response){
+                    if (err) {
+                      console.log("Something has gone wrong: ", err);
+                    } else {
+                      console.log("Successfully sent to user " + req.body.seller_phone + " with response: ", response);
+                    }
+                  });
                 }
-              });
-            }
+
+              } else {
+                console.log(err);
+              }
+            });
 
           } else {
-            console.log(err);
+            res.status(400).send(err);
           }
+
         });
-
-      } else {
-        res.status(400).send(err);
       }
-
     });
   });
 
